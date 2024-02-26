@@ -1,0 +1,37 @@
+origin;destination;mode;traffic_model;departure_time
+26 Anatolikis Romilias, Thessaloniki, 54454, Greece;26 Anatolikis Romilias, Thessaloniki, 54454, Greece;driving;best_guess;now
+26 Anatolikis Romilias, Thessaloniki, 54454, Greece;3 Kolchidos, Kalamaria, 55131, Greece;driving;best_guess;now
+26 Anatolikis Romilias, Thessaloniki, 54454, Greece;2 Markou Mpotsari, Thessaloniki, 54643, Greece;driving;best_guess;now
+26 Anatolikis Romilias, Thessaloniki, 54454, Greece;10 Alonnisou, Thessaloniki, 54638, Greece ;driving;best_guess;now
+26 Anatolikis Romilias, Thessaloniki, 54454, Greece;7 Dimokratias, Panorama,  55236, Greece;driving;best_guess;now
+26 Anatolikis Romilias, Thessaloniki, 54454, Greece;30 Andrea Papandreou, Kalamaria, 55133, Greece ;driving;best_guess;now
+3 Kolchidos, Kalamaria, 55131, Greece;26 Anatolikis Romilias, Thessaloniki, 54454, Greece;driving;best_guess;now
+3 Kolchidos, Kalamaria, 55131, Greece;3 Kolchidos, Kalamaria, 55131, Greece;driving;best_guess;now
+3 Kolchidos, Kalamaria, 55131, Greece;2 Markou Mpotsari, Thessaloniki, 54643, Greece;driving;best_guess;now
+3 Kolchidos, Kalamaria, 55131, Greece;10 Alonnisou, Thessaloniki, 54638, Greece ;driving;best_guess;now
+3 Kolchidos, Kalamaria, 55131, Greece;7 Dimokratias, Panorama,  55236, Greece;driving;best_guess;now
+3 Kolchidos, Kalamaria, 55131, Greece;30 Andrea Papandreou, Kalamaria, 55133, Greece ;driving;best_guess;now
+2 Markou Mpotsari, Thessaloniki, 54643, Greece;26 Anatolikis Romilias, Thessaloniki, 54454, Greece;driving;best_guess;now
+2 Markou Mpotsari, Thessaloniki, 54643, Greece;3 Kolchidos, Kalamaria, 55131, Greece;driving;best_guess;now
+2 Markou Mpotsari, Thessaloniki, 54643, Greece;2 Markou Mpotsari, Thessaloniki, 54643, Greece;driving;best_guess;now
+2 Markou Mpotsari, Thessaloniki, 54643, Greece;10 Alonnisou, Thessaloniki, 54638, Greece ;driving;best_guess;now
+2 Markou Mpotsari, Thessaloniki, 54643, Greece;7 Dimokratias, Panorama,  55236, Greece;driving;best_guess;now
+2 Markou Mpotsari, Thessaloniki, 54643, Greece;30 Andrea Papandreou, Kalamaria, 55133, Greece ;driving;best_guess;now
+10 Alonnisou, Thessaloniki, 54638, Greece ;26 Anatolikis Romilias, Thessaloniki, 54454, Greece;driving;best_guess;now
+10 Alonnisou, Thessaloniki, 54638, Greece ;3 Kolchidos, Kalamaria, 55131, Greece;driving;best_guess;now
+10 Alonnisou, Thessaloniki, 54638, Greece ;2 Markou Mpotsari, Thessaloniki, 54643, Greece;driving;best_guess;now
+10 Alonnisou, Thessaloniki, 54638, Greece ;10 Alonnisou, Thessaloniki, 54638, Greece ;driving;best_guess;now
+10 Alonnisou, Thessaloniki, 54638, Greece ;7 Dimokratias, Panorama,  55236, Greece;driving;best_guess;now
+10 Alonnisou, Thessaloniki, 54638, Greece ;30 Andrea Papandreou, Kalamaria, 55133, Greece ;driving;best_guess;now
+7 Dimokratias, Panorama,  55236, Greece;26 Anatolikis Romilias, Thessaloniki, 54454, Greece;driving;best_guess;now
+7 Dimokratias, Panorama,  55236, Greece;3 Kolchidos, Kalamaria, 55131, Greece;driving;best_guess;now
+7 Dimokratias, Panorama,  55236, Greece;2 Markou Mpotsari, Thessaloniki, 54643, Greece;driving;best_guess;now
+7 Dimokratias, Panorama,  55236, Greece;10 Alonnisou, Thessaloniki, 54638, Greece ;driving;best_guess;now
+7 Dimokratias, Panorama,  55236, Greece;7 Dimokratias, Panorama,  55236, Greece;driving;best_guess;now
+7 Dimokratias, Panorama,  55236, Greece;30 Andrea Papandreou, Kalamaria, 55133, Greece ;driving;best_guess;now
+30 Andrea Papandreou, Kalamaria, 55133, Greece ;26 Anatolikis Romilias, Thessaloniki, 54454, Greece;driving;best_guess;now
+30 Andrea Papandreou, Kalamaria, 55133, Greece ;3 Kolchidos, Kalamaria, 55131, Greece;driving;best_guess;now
+30 Andrea Papandreou, Kalamaria, 55133, Greece ;2 Markou Mpotsari, Thessaloniki, 54643, Greece;driving;best_guess;now
+30 Andrea Papandreou, Kalamaria, 55133, Greece ;10 Alonnisou, Thessaloniki, 54638, Greece ;driving;best_guess;now
+30 Andrea Papandreou, Kalamaria, 55133, Greece ;7 Dimokratias, Panorama,  55236, Greece;driving;best_guess;now
+30 Andrea Papandreou, Kalamaria, 55133, Greece ;30 Andrea Papandreou, Kalamaria, 55133, Greece ;driving;best_guess;now

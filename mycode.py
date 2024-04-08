@@ -14,13 +14,15 @@ pd.set_option('display.max_colwidth', None)
 
 
 # Read the Excel file into a pandas DataFrame
-df = pd.read_excel("C:/Users/annav/OneDrive/Υπολογιστής/DATA XRONOI/data_xronoi_best_guess_ABCD.xlsx", index_col=0)
+df = pd.read_excel("C:/Users/annav/OneDrive/Υπολογιστής/DATA XRONOI/data_xronoi_pert.xlsx", index_col=0)
 df2 = pd.read_excel("C:/Users/annav/PycharmProjects/CVRPTW_PROBLEM/timewindows.xlsx")
+df3 = pd.read_excel("C:/Users/annav/OneDrive/Υπολογιστής/DATA XRONOI/data_distance_km.xlsx", index_col=0)
 
 def create_data_model():
     """Stores the data for the problem."""
     data = {}
-    data["locations"] = 79
+    data["locations"] = len(df)
+    data["distance_km"] = df3.values.tolist()
     data["time_matrix"] = df.values.tolist()
     data["unload_times"] = df2["Unload Times"][0:data["locations"]].astype(int).tolist()
     data["earliest_arrival_time"] = df2["EAT"][0:data["locations"]].astype(int).tolist()
@@ -35,25 +37,29 @@ print(create_data_model())
 
 def print_solution(data, manager, routing, solution):
 
-    solutionDF = pd.DataFrame(columns=['Route', 'Time', 'Google Maps Link'])
+    solutionDF = pd.DataFrame(columns=['Route', 'Time (min)', 'Distance (km)'])
     """Prints solution on console."""
     print(f"Objective: {solution.ObjectiveValue()}")
     time_dimension = routing.GetDimensionOrDie("Time")
     total_time = 0
-    dictObj = {}
 
     for vehicle_id in range(data["num_vehicles"]):
         dictObj = {}
         index = routing.Start(vehicle_id)
         plan_output = f"Route for vehicle {vehicle_id}:\n"
+        total_distance = 0.0
         while not routing.IsEnd(index):
             time_var = time_dimension.CumulVar(index)
+            next_index = solution.Value(routing.NextVar(index))
+            total_distance += data["distance_km"][manager.IndexToNode(index)][manager.IndexToNode(next_index)]
             plan_output += (
                 f"{manager.IndexToNode(index)}"
                 f" Time({solution.Min(time_var)},{solution.Max(time_var)})"
                 " -> "
             )
-            index = solution.Value(routing.NextVar(index))
+            index = next_index
+            total_distance_str = "{:.1f}".format(total_distance)  # Round total distance to one decimal place as a string
+
         time_var = time_dimension.CumulVar(index)
         plan_output += (
             f"{manager.IndexToNode(index)}"
@@ -61,14 +67,30 @@ def print_solution(data, manager, routing, solution):
         )
         routeInfo = plan_output
         timeInfo = solution.Min(time_var)
-        plan_output += f"Time of the route: {timeInfo}min\n"
-        dictObj['Time'] = timeInfo
+        plan_output += (
+            f"Time of the route: {timeInfo}min\n"
+            f"Distance of the route: {total_distance_str}km\n"
+        )
+        dictObj['Time (min)'] = timeInfo
         dictObj['Route'] = routeInfo
+        dictObj['Distance (km)'] = total_distance
         solutionDF.loc[len(solutionDF)] = dictObj
         print(plan_output)
         total_time += solution.Min(time_var)
     print(f"Total time of all routes: {total_time}min")
     writer = pd.ExcelWriter('output.xlsx', engine='xlsxwriter')
+    # Print solver status regardless of whether a solution is found or not
+    status = routing.status()
+    status_meaning = {
+        0: "ROUTING_NOT_SOLVED: Problem not solved yet.",
+        1: "ROUTING_SUCCESS: Problem solved successfully.",
+        2: "ROUTING_PARTIAL_SUCCESS_LOCAL_OPTIMUM_NOT_REACHED: Problem solved successfully after calling RoutingModel.Solve(), except that a local optimum has not been reached. Leaving more time would allow improving the solution.",
+        3: "ROUTING_FAIL: No solution found to the problem.",
+        4: "ROUTING_FAIL_TIMEOUT: Time limit reached before finding a solution.",
+        5: "ROUTING_INVALID: Model, model parameters, or flags are not valid.",
+        6: "ROUTING_INFEASIBLE: Problem proven to be infeasible."
+    }
+    print("Solver status:", status_meaning.get(status, "Unknown status"))
 
     # Get the xlsxwriter workbook and worksheet objects.
     workbook = writer.book
@@ -111,7 +133,7 @@ def main():
     time = "Time"
     routing.AddDimension(
         transit_callback_index,
-        15,  # allow waiting time
+        20,  # allow waiting time
         420,  # maximum time per vehicle
         False,  # Don't force start cumul to zero.
         time,
@@ -143,12 +165,13 @@ def main():
         # Setting first solution heuristic.
         search_parameters = pywrapcp.DefaultRoutingSearchParameters()
         search_parameters.first_solution_strategy = (
-            routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+            routing_enums_pb2.FirstSolutionStrategy.AUTOMATIC
         )
+        # Setting optimized solution metaheuristic.
         search_parameters.local_search_metaheuristic = (
             routing_enums_pb2.LocalSearchMetaheuristic.TABU_SEARCH
         )
-        search_parameters.time_limit.seconds = 20
+        search_parameters.time_limit.seconds = 60
 
     # Solve the problem.
     solution = routing.SolveWithParameters(search_parameters)
@@ -156,6 +179,8 @@ def main():
     # Print solution on console.
     if solution:
         print_solution(data, manager, routing, solution)
+    else:
+        print("\nNo solutions founds")
 
 
 if __name__ == "__main__":

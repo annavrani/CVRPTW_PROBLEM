@@ -14,7 +14,7 @@ pd.set_option('display.max_colwidth', None)
 
 
 # Read the Excel file into a pandas DataFrame
-df = pd.read_excel("C:/Users/annav/OneDrive/Υπολογιστής/DATA XRONOI/data_xronoi_pert.xlsx", index_col=0)
+df = pd.read_excel("C:/Users/annav/OneDrive/Υπολογιστής/DATA XRONOI/data_xronoi_optimistic.xlsx", index_col=0)
 df2 = pd.read_excel("C:/Users/annav/PycharmProjects/CVRPTW_PROBLEM/timewindows.xlsx")
 df3 = pd.read_excel("C:/Users/annav/OneDrive/Υπολογιστής/DATA XRONOI/data_distance_km.xlsx", index_col=0)
 
@@ -28,6 +28,10 @@ def create_data_model():
     data["earliest_arrival_time"] = df2["EAT"][0:data["locations"]].astype(int).tolist()
     data["latest_arrival_time"] = df2["LAT"][0:data["locations"]].astype(int).tolist()
     data["time_windows"] = list(zip(data["earliest_arrival_time"], data["latest_arrival_time"]))
+    data["mass"] = [round(value, 2) for value in df2["Mass"][0:data["locations"]]]
+    data["volume"] = [round(value, 2) for value in df2["Volume"][0:data["locations"]]]
+    data["mass"] = df2["Mass"][0:data["locations"]].tolist()
+    data["volume"] = df2["Volume"][0:data["locations"]].tolist()
     data["num_vehicles"] = 4
     data["depot"] = 0
     return data
@@ -37,7 +41,7 @@ print(create_data_model())
 
 def print_solution(data, manager, routing, solution):
 
-    solutionDF = pd.DataFrame(columns=['Route', 'Time (min)', 'Distance (km)'])
+    solutionDF = pd.DataFrame(columns=['Route', 'Time (min)', 'Distance (km)', 'Total mass (kg)', 'Total volume (m3)'])
     """Prints solution on console."""
     print(f"Objective: {solution.ObjectiveValue()}")
     time_dimension = routing.GetDimensionOrDie("Time")
@@ -46,12 +50,16 @@ def print_solution(data, manager, routing, solution):
     for vehicle_id in range(data["num_vehicles"]):
         dictObj = {}
         index = routing.Start(vehicle_id)
-        plan_output = f"Route for vehicle {vehicle_id}:\n"
+        plan_output = f"Route for vehicle {vehicle_id+1}:\n"
         total_distance = 0.0
+        total_mass = 0.0
+        total_volume = 0.0
         while not routing.IsEnd(index):
             time_var = time_dimension.CumulVar(index)
             next_index = solution.Value(routing.NextVar(index))
             total_distance += data["distance_km"][manager.IndexToNode(index)][manager.IndexToNode(next_index)]
+            total_mass += data["mass"][manager.IndexToNode(index)]
+            total_volume += data["volume"][manager.IndexToNode(index)]
             plan_output += (
                 f"{manager.IndexToNode(index)}"
                 f" Time({solution.Min(time_var)},{solution.Max(time_var)})"
@@ -59,7 +67,8 @@ def print_solution(data, manager, routing, solution):
             )
             index = next_index
             total_distance_str = "{:.1f}".format(total_distance)  # Round total distance to one decimal place as a string
-
+            total_mass_str = "{:.3f}".format(total_mass)
+            total_volume_str = "{:.5f}".format(total_volume)
         time_var = time_dimension.CumulVar(index)
         plan_output += (
             f"{manager.IndexToNode(index)}"
@@ -70,10 +79,14 @@ def print_solution(data, manager, routing, solution):
         plan_output += (
             f"Time of the route: {timeInfo}min\n"
             f"Distance of the route: {total_distance_str}km\n"
+            f"Total mass of load: {total_mass_str}kg\n"
+            f"Total volume of load: {total_volume_str}m3\n"
         )
         dictObj['Time (min)'] = timeInfo
         dictObj['Route'] = routeInfo
         dictObj['Distance (km)'] = total_distance
+        dictObj['Total mass (kg)'] = total_mass
+        dictObj['Total volume (m3)'] = total_volume
         solutionDF.loc[len(solutionDF)] = dictObj
         print(plan_output)
         total_time += solution.Min(time_var)
@@ -165,13 +178,13 @@ def main():
         # Setting first solution heuristic.
         search_parameters = pywrapcp.DefaultRoutingSearchParameters()
         search_parameters.first_solution_strategy = (
-            routing_enums_pb2.FirstSolutionStrategy.AUTOMATIC
+            routing_enums_pb2.FirstSolutionStrategy.SAVINGS
         )
         # Setting optimized solution metaheuristic.
         search_parameters.local_search_metaheuristic = (
             routing_enums_pb2.LocalSearchMetaheuristic.TABU_SEARCH
         )
-        search_parameters.time_limit.seconds = 60
+        search_parameters.time_limit.seconds = 120
 
     # Solve the problem.
     solution = routing.SolveWithParameters(search_parameters)
